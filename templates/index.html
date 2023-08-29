@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <style>
+        #chatbox {
+          width: 400px;
+          height: 500px;
+          border: 1px solid #ccc;
+          padding: 10px;
+          overflow-y: scroll;
+        }
+
+        .chatlog {
+          height: 400px;
+          overflow-y: auto;
+        }
+
+        #usermsg {
+          width: 300px;
+        }
+
+        #submitmsg {
+          width: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatbox">
+        <div class="chatlog">
+            <!-- log chat ditampilkan di sini -->
+        </div>
+        <input id="usermsg" type="text" placeholder="Enter message..." />
+        <button id="submitmsg" type="button">Send</button>
+    </div>
+
+    <script>
+        document.getElementById("submitmsg").addEventListener("click", function() {
+          var usermsg = document.getElementById("usermsg").value;
+          document.getElementById("usermsg").value = "";
+
+          // Kirim permintaan AJAX ke rute /get_response untuk mendapatkan tanggapan dari chatbot
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "/get_response", true);
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              var response = JSON.parse(xhr.responseText).response;
+              // Tampilkan tanggapan chatbot di log chat
+              var chatlog = document.querySelector(".chatlog");
+              var message = document.createElement("div");
+              message.innerHTML = "<strong>You:</strong> " + usermsg + "<br><strong>Chatbot:</strong> " + response;
+              chatlog.appendChild(message);
+            }
+          };
+          xhr.send("msg=" + usermsg);
+        });
+    </script>
+</body>
+</html>
